@@ -18,4 +18,17 @@ export default class TesteController {
       return badRequest(err.message);
     }
   }
+
+  async testeChamadaBanco({ params }) {
+    const { id } = params;
+    try {
+      const data = await this.service.testeChamadaBanco({ id });
+
+      if (data.length === 0) return noContent("Sem dados no banco");
+
+      return ok(data);
+    } catch (err) {
+      return badRequest(err.message);
+    }
+  }
 }

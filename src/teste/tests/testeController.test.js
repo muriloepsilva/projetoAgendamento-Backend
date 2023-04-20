@@ -3,6 +3,7 @@ import TesteController from "../controller/testeController";
 import TesteService from "../service/testeService";
 import { badRequest, noContent, ok } from "../../../utils/responsesCodes";
 import { mandatoryFields } from "../../../utils/constants";
+import { mockUsuario } from "../utils/mock";
 
 const sut = ({ method, serviceFn }) => {
   const controller = new TesteController();
@@ -14,50 +15,98 @@ const sut = ({ method, serviceFn }) => {
 };
 
 describe("Testes da TesteController", () => {
-  test("Esse retorna status 200 com os dados", async () => {
-    const { controller, service } = sut({
-      method: "teste",
-      serviceFn: () => "Seu nome é: Murilo e você tem 18 anos",
+  describe("teste", () => {
+    test("Esse retorna status 200 com os dados", async () => {
+      const { controller, service } = sut({
+        method: "teste",
+        serviceFn: () => "Seu nome é: Murilo e você tem 18 anos",
+      });
+
+      const response = await controller.teste({
+        headers: { nome: "Murilo" },
+        body: { idade: 18 },
+      });
+
+      expect(response).toEqual(ok("Seu nome é: Murilo e você tem 18 anos"));
+      expect(service).toHaveBeenCalledTimes(1);
     });
 
-    const response = await controller.teste({
-      headers: { nome: "Murilo" },
-      body: { idade: 18 },
+    test("Esse retorna status 204", async () => {
+      const { controller, service } = sut({
+        method: "teste",
+        serviceFn: () => null,
+      });
+
+      const response = await controller.teste({
+        headers: { nome: "Murilo" },
+        body: { idade: 18 },
+      });
+
+      expect(response).toEqual(noContent("Retorno vazio"));
+      expect(service).toHaveBeenCalledTimes(1);
     });
 
-    expect(response).toEqual(ok("Seu nome é: Murilo e você tem 18 anos"));
-    expect(service).toHaveBeenCalledTimes(1);
+    test("Esse retorna status 400", async () => {
+      const { controller, service } = sut({
+        method: "teste",
+        serviceFn: () => {
+          throw new Error(mandatoryFields("nome"));
+        },
+      });
+
+      const response = await controller.teste({
+        headers: { nome: "Murilo" },
+        body: { idade: 18 },
+      });
+
+      expect(response).toEqual(badRequest(mandatoryFields("nome")));
+      expect(service).toHaveBeenCalledTimes(1);
+    });
   });
 
-  test("Esse retorna status 204", async () => {
-    const { controller, service } = sut({
-      method: "teste",
-      serviceFn: () => null,
+  describe("testeChamadaBanco", () => {
+    test("Esse tem que retornar status 204", async () => {
+      const { controller, service } = sut({
+        method: "testeChamadaBanco",
+        serviceFn: () => [],
+      });
+
+      const response = await controller.testeChamadaBanco({
+        params: { id: 28 },
+      });
+
+      expect(response).toEqual(noContent("Sem dados no banco"));
+      expect(service).toHaveBeenCalledTimes(1);
     });
 
-    const response = await controller.teste({
-      headers: { nome: "Murilo" },
-      body: { idade: 18 },
+    test("Esse tem que retornar status 200", async () => {
+      const { controller, service } = sut({
+        method: "testeChamadaBanco",
+        serviceFn: () => mockUsuario,
+      });
+
+      const response = await controller.testeChamadaBanco({
+        params: { id: 1 },
+      });
+
+      expect(response).toEqual(ok(mockUsuario));
+      expect(service).toHaveBeenCalledTimes(1);
     });
 
-    expect(response).toEqual(noContent("Retorno vazio"));
-    expect(service).toHaveBeenCalledTimes(1);
-  });
+    test("Esse tem que retornar status 400 por não ter recebido o id", async () => {
+      const { controller, service } = sut({
+        method: "testeChamadaBanco",
+        serviceFn: () => {
+          throw new Error(mandatoryFields("id"));
+        },
+      });
 
-  test("Esse retorna status 400", async () => {
-    const { controller, service } = sut({
-      method: "teste",
-      serviceFn: () => {
-        throw new Error(mandatoryFields("nome"));
-      },
+      const response = await controller.testeChamadaBanco({
+        params: { id: null },
+      });
+
+      expect(response).toEqual(badRequest(mandatoryFields("id")));
+      expect(service).toHaveBeenCalledTimes(1);
     });
-
-    const response = await controller.teste({
-      headers: { nome: "Murilo" },
-      body: { idade: 18 },
-    });
-
-    expect(response).toEqual(badRequest(mandatoryFields("nome")));
-    expect(service).toHaveBeenCalledTimes(1);
   });
 });

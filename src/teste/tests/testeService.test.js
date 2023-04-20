@@ -1,9 +1,12 @@
 import { describe, expect, test } from "vitest";
 import TesteService from "../service/testeService";
 import { mandatoryFields } from "../../../utils/constants";
+import TesteRepositoryInMemory from "../repository/testeRepositoryInMemory";
+import { mockUsuario } from "../utils/mock";
 
 const sut = () => {
-  const service = new TesteService();
+  const repository = new TesteRepositoryInMemory();
+  const service = new TesteService(repository);
 
   return { service };
 };
@@ -32,6 +35,26 @@ describe("Testes da classe TesteService", () => {
       const response = await service.teste({ nome: "Murilo", idade: 18 });
 
       expect(response).toEqual("Seu nome é: Murilo e você tem 18 anos");
+    });
+  });
+
+  describe("testeChamadaBanco", () => {
+    test("Esse tem que lançar uma exceção por não ter recebido o id", async () => {
+      const { service } = sut();
+
+      await expect(service.testeChamadaBanco({ id: null })).rejects.toThrow(
+        new Error(mandatoryFields("id"))
+      );
+    });
+
+    test("Esse tem que retornar os dados do usuário", async () => {
+      const { service } = sut();
+
+      const response = await service.testeChamadaBanco({ id: 1 });
+      expect(response).toEqual(mockUsuario);
+
+      const responseArray = await service.testeChamadaBanco({ id: [1] });
+      expect(responseArray).toEqual(mockUsuario);
     });
   });
 });
