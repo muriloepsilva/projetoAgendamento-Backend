@@ -1,12 +1,9 @@
 import { describe, expect, test } from "vitest";
 import TesteService from "../service/testeService";
 import { mandatoryFields } from "../../../utils/constants";
-import TesteRepositoryInMemory from "../repository/testeRepositoryInMemory";
-import { mockUsuario } from "../utils/mock";
 
 const sut = () => {
-  const repository = new TesteRepositoryInMemory();
-  const service = new TesteService(repository);
+  const service = new TesteService();
 
   return { service };
 };

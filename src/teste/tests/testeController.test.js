@@ -3,7 +3,6 @@ import TesteController from "../controller/testeController";
 import TesteService from "../service/testeService";
 import { badRequest, noContent, ok } from "../../../utils/responsesCodes";
 import { mandatoryFields } from "../../../utils/constants";
-import { mockUsuario } from "../utils/mock";
 
 const sut = ({ method, serviceFn }) => {
   const controller = new TesteController();
