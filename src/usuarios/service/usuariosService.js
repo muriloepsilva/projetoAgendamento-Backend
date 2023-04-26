@@ -1,6 +1,6 @@
 import UsuariosRepository from "../repository/usuariosRepository.js";
 import { mandatoryFields } from "../../../utils/constants.js";
-import { buildUpdate, encryptPassword } from "../../../utils/functions.js";
+import { encryptPassword } from "../../../utils/functions.js";
 import DataFormatter from "../../../infra/dataformatter.js";
 
 export default class UsuariosService {

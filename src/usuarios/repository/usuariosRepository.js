@@ -7,7 +7,7 @@ export default class UsuariosRepository {
   }
 
   async insertUsuario(data) {
-    return mysqlQueryFunction(
+    mysqlQueryFunction(
       `INSERT INTO ${databaseName}.usuarios
         (nome, data_nascimento, email, senha)
         VALUES(?,?, ?, ?);`,
