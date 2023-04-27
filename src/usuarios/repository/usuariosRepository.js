@@ -30,4 +30,10 @@ export default class UsuariosRepository {
       `SELECT id, nome, data_nascimento, email FROM ${databaseName}.usuarios`
     );
   }
+
+  async updateUser({ setQuery, whereQuery }) {
+    return mysqlQueryFunction(
+      `UPDATE ${databaseName}.usuarios ${setQuery} ${whereQuery}`
+    );
+  }
 }

@@ -1,6 +1,6 @@
 import UsuariosRepository from "../repository/usuariosRepository.js";
 import { mandatoryFields } from "../../../utils/constants.js";
-import { encryptPassword } from "../../../utils/functions.js";
+import { buildUpdate, encryptPassword } from "../../../utils/functions.js";
 import DataFormatter from "../../../infra/dataformatter.js";
 
 export default class UsuariosService {
@@ -14,15 +14,7 @@ export default class UsuariosService {
     if (!senha) throw new Error(mandatoryFields("senha"));
     if (!dataNascimento) throw new Error(mandatoryFields("dataNascimento"));
 
-    const allUsers = await this.repository.selectUsuariosEmails();
-
-    const usuarioCadastrado = allUsers.filter(
-      (userEmail) => userEmail.email === email
-    );
-
-    if (usuarioCadastrado.length > 0) {
-      throw new Error("Usuário já cadastrado!");
-    }
+    await this.verifyUserByEmail(email);
 
     const senhaEncriptada = await encryptPassword(senha);
 
@@ -54,5 +46,45 @@ export default class UsuariosService {
     });
 
     return users;
+  }
+
+  async updateUser({ body }) {
+    let qtdError = 0;
+    let qtdSuccess = 0;
+    const error = [];
+
+    const bodyArray = Array.isArray(body) ? body : [body];
+
+    for (const user of bodyArray) {
+      const emailExists = await this.verifyUserByEmail(user.email);
+      if (emailExists) {
+        qtdError += 1;
+        error.push(user);
+      } else {
+        if (user.senha) user.senha = await encryptPassword(user.senha);
+        const { setQuery, whereQuery } = buildUpdate(user);
+        await this.repository.updateUser({
+          setQuery,
+          whereQuery,
+        });
+        qtdSuccess += 1;
+      }
+    }
+
+    return { qtdError, qtdSuccess, error };
+  }
+
+  async verifyUserByEmail(email) {
+    const allUsers = await this.repository.selectUsuariosEmails();
+
+    const usuarioCadastrado = allUsers.filter(
+      (userEmail) => userEmail.email === email
+    );
+
+    if (usuarioCadastrado.length > 0) {
+      return "Usuário já cadastrado!";
+    }
+
+    return null;
   }
 }

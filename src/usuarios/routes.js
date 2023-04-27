@@ -20,4 +20,9 @@ usuariosRouter.get(
   adaptRoute.expressRoute(usuariosController, "listUsers")
 );
 
+usuariosRouter.put(
+  "/updateUser",
+  adaptRoute.expressRoute(usuariosController, "updateUser")
+);
+
 export { usuariosRouter };

@@ -51,4 +51,23 @@ export default class UsuariosController {
       return badRequest(err.message);
     }
   }
+
+  async updateUser({ body }) {
+    try {
+      const { qtdError, qtdSuccess, error } = await this.service.updateUser({
+        body,
+      });
+
+      if (qtdError > 0 && qtdSuccess === 0)
+        return badRequest({ qtdError, error });
+      if (qtdError > 0 && qtdSuccess > 0)
+        return ok({ qtdError, qtdSuccess, error });
+
+      if (qtdSuccess > 0 && qtdError === 0) return ok({ qtdSuccess });
+
+      return badRequest("Erro ao atualizar o(s) usuário(s)");
+    } catch (err) {
+      return badRequest(err.message);
+    }
+  }
 }
