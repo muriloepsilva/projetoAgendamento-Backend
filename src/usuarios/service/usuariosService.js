@@ -27,8 +27,8 @@ export default class UsuariosService {
     if (!id) throw new Error(mandatoryFields("id"));
 
     const user = await this.repository.selectUserById(id);
-    user.data_nascimento = DataFormatter.format(
-      user.data_nascimento,
+    user.dataNascimento = DataFormatter.format(
+      user.dataNascimento,
       "DD/MM/YYYY"
     );
 
@@ -39,8 +39,8 @@ export default class UsuariosService {
     const users = await this.repository.listUsers();
 
     users.forEach((user) => {
-      user.data_nascimento = DataFormatter.format(
-        user.data_nascimento,
+      user.dataNascimento = DataFormatter.format(
+        user.dataNascimento,
         "DD/MM/YYYY"
       );
     });
