@@ -3,10 +3,11 @@ import { config } from "dotenv-safe";
 config();
 
 const configDb = {
-  host: process.env.HOSTDATABASE,
-  user: process.env.USERDATABASE,
-  password: process.env.PASSWORDDATABASE,
-  database: process.env.DATABASENAME,
+  host: process.env.MYSQL_ADDON_HOST,
+  user: process.env.MYSQL_ADDON_USER,
+  password: process.env.MYSQL_ADDON_PASSWORD,
+  database: process.env.MYSQL_ADDON_DB,
+  port: process.env.MYSQL_ADDON_PORT,
 };
 
 export async function mysqlQueryFunction(query, params) {
