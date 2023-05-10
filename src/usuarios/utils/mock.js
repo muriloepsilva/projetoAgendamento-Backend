@@ -2,7 +2,7 @@ export const mockUsuario = [
   {
     id: 1,
     nome: "User Name",
-    data_nascimento: "13/09/2004",
+    dataNascimento: "13/09/2004",
     email: "useremail@email.com",
   },
 ];
@@ -12,13 +12,13 @@ export const mockUsuariosDatabase = [
     id: 1,
     nome: "User Name",
     email: "useremail@email.com",
-    data_nascimento: "13/09/2004",
+    dataNascimento: "13/09/2004",
   },
 
   {
     id: 2,
     nome: "User Name2",
     email: "useremail2@email.com",
-    data_nascimento: "28/03/2005",
+    dataNascimento: "28/03/2005",
   },
 ];

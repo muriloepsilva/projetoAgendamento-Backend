@@ -14,7 +14,8 @@ export default class UsuariosService {
     if (!senha) throw new Error(mandatoryFields("senha"));
     if (!dataNascimento) throw new Error(mandatoryFields("dataNascimento"));
 
-    await this.verifyUserByEmail(email);
+    const userEmailExists = await this.verifyUserByEmail(email);
+    if (userEmailExists) throw new Error(userEmailExists.message);
 
     const senhaEncriptada = await encryptPassword(senha);
 
@@ -103,7 +104,7 @@ export default class UsuariosService {
     );
 
     if (usuarioCadastrado.length > 0) {
-      return "Usuário já cadastrado!";
+      return { message: "Usuário já cadastrado!" };
     }
 
     return null;

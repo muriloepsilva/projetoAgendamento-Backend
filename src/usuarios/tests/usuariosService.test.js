@@ -52,13 +52,13 @@ describe("Testes da classe UsuariosService", () => {
       ).rejects.toThrow(new Error(mandatoryFields("dataNascimento")));
     });
 
-    test("Esse tem que retornar um erro por já ter o email cadastrado", async () => {
+    test("Esse tem que lançar uma exceção por ter recebido um email que já está cadastrado no banco", async () => {
       const { service } = sut();
 
       await expect(
         service.insertUsuario({
           nome: "nome",
-          email: "useremail@email.com",
+          email: "useremail2@email.com",
           senha: "senha",
           dataNascimento: "2023-04-25",
         })
@@ -98,7 +98,7 @@ describe("Testes da classe UsuariosService", () => {
         id: 1,
         nome: "User Name",
         email: "useremail@email.com",
-        data_nascimento: "13/09/2004",
+        dataNascimento: "13/09/2004",
       });
     });
   });
@@ -114,13 +114,13 @@ describe("Testes da classe UsuariosService", () => {
           id: 1,
           nome: "User Name",
           email: "useremail@email.com",
-          data_nascimento: "13/09/2004",
+          dataNascimento: "13/09/2004",
         },
         {
           id: 2,
           nome: "User Name2",
           email: "useremail2@email.com",
-          data_nascimento: "28/03/2005",
+          dataNascimento: "28/03/2005",
         },
       ]);
     });
