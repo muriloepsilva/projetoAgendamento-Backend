@@ -33,4 +33,8 @@ export default class UsuariosRepository {
   async updateUser({ setQuery, whereQuery }) {
     return mysqlQueryFunction(`UPDATE usuarios ${setQuery} ${whereQuery}`);
   }
+
+  async deleteUser(id) {
+    return mysqlQueryFunction(`DELETE FROM usuarios WHERE id = ?`, [id]);
+  }
 }

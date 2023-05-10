@@ -31,4 +31,8 @@ export default class UsuariosRepositoryInMemory {
   async listUsers() {
     return this.users;
   }
+
+  async deleteUser() {
+    return [];
+  }
 }

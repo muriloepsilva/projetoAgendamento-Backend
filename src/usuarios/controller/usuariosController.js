@@ -70,4 +70,18 @@ export default class UsuariosController {
       return badRequest(err.message);
     }
   }
+
+  async deleteUser({ body }) {
+    const { id } = body;
+    try {
+      const { qtdErro, qtdSucesso } = await this.service.deleteUser({ id });
+
+      if (qtdErro > 0 && qtdSucesso === 0)
+        return badRequest("Falha ao deletar o(s) usuário(s)");
+
+      return ok({ qtdSucesso, qtdErro });
+    } catch (err) {
+      return badRequest(err.message);
+    }
+  }
 }

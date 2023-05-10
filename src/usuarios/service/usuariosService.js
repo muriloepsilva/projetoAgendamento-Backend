@@ -56,6 +56,8 @@ export default class UsuariosService {
     const bodyArray = Array.isArray(body) ? body : [body];
 
     for (const user of bodyArray) {
+      if (!user.id) throw new Error(mandatoryFields("id"));
+
       const emailExists = await this.verifyUserByEmail(user.email);
       if (emailExists) {
         qtdError += 1;
@@ -72,6 +74,25 @@ export default class UsuariosService {
     }
 
     return { qtdError, qtdSuccess, error };
+  }
+
+  async deleteUser({ id }) {
+    if (!id) throw new Error(mandatoryFields("id"));
+    const idsArray = Array.isArray(id) ? id : [id];
+    let qtdErro = 0;
+    let qtdSucesso = 0;
+
+    for (const id of idsArray) {
+      const deletedUser = await this.repository.deleteUser(id);
+
+      if (deletedUser.affectedRows > 0) {
+        qtdSucesso += 1;
+      } else {
+        qtdErro += 1;
+      }
+    }
+
+    return { qtdErro, qtdSucesso };
   }
 
   async verifyUserByEmail(email) {

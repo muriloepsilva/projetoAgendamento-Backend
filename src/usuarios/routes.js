@@ -25,4 +25,9 @@ usuariosRouter.put(
   adaptRoute.expressRoute(usuariosController, "updateUser")
 );
 
+usuariosRouter.delete(
+  "/deleteUser",
+  adaptRoute.expressRoute(usuariosController, "deleteUser")
+);
+
 export { usuariosRouter };
