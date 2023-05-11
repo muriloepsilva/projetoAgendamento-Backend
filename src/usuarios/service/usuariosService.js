@@ -1,5 +1,10 @@
 import UsuariosRepository from "../repository/usuariosRepository.js";
-import { mandatoryFields } from "../../../utils/constants.js";
+import {
+  dateFormats,
+  fields,
+  mandatoryFields,
+  userAlreadyInDB,
+} from "../../../utils/constants.js";
 import { buildUpdate, encryptPassword } from "../../../utils/functions.js";
 import DataFormatter from "../../../infra/dataformatter.js";
 
@@ -9,10 +14,10 @@ export default class UsuariosService {
   }
 
   async insertUsuario({ nome, email, senha, dataNascimento }) {
-    if (!nome) throw new Error(mandatoryFields("nome"));
-    if (!email) throw new Error(mandatoryFields("email"));
-    if (!senha) throw new Error(mandatoryFields("senha"));
-    if (!dataNascimento) throw new Error(mandatoryFields("dataNascimento"));
+    if (!nome) throw new Error(mandatoryFields(fields.nome));
+    if (!email) throw new Error(mandatoryFields(fields.email));
+    if (!senha) throw new Error(mandatoryFields(fields.senha));
+    if (!dataNascimento) throw new Error(mandatoryFields(fields.dataNasc));
 
     const userEmailExists = await this.verifyUserByEmail(email);
     if (userEmailExists) throw new Error(userEmailExists.message);
@@ -25,12 +30,12 @@ export default class UsuariosService {
   }
 
   async listUserById({ id }) {
-    if (!id) throw new Error(mandatoryFields("id"));
+    if (!id) throw new Error(mandatoryFields(fields.id));
 
     const user = await this.repository.selectUserById(id);
     user.dataNascimento = DataFormatter.format(
       user.dataNascimento,
-      "DD/MM/YYYY"
+      dateFormats.formatoBrPadrao
     );
 
     return user;
@@ -42,7 +47,7 @@ export default class UsuariosService {
     users.forEach((user) => {
       user.dataNascimento = DataFormatter.format(
         user.dataNascimento,
-        "DD/MM/YYYY"
+        dateFormats.formatoBrPadrao
       );
     });
 
@@ -57,8 +62,8 @@ export default class UsuariosService {
     const bodyArray = Array.isArray(body) ? body : [body];
 
     for (const user of bodyArray) {
-      if (!user.id) throw new Error(mandatoryFields("id"));
-      if (!user.email) throw new Error(mandatoryFields("email"));
+      if (!user.id) throw new Error(mandatoryFields(fields.id));
+      if (!user.email) throw new Error(mandatoryFields(fields.email));
 
       const emailExists = await this.verifyUserByEmail(user.email);
       if (emailExists) {
@@ -79,7 +84,7 @@ export default class UsuariosService {
   }
 
   async deleteUser({ id }) {
-    if (!id) throw new Error(mandatoryFields("id"));
+    if (!id) throw new Error(mandatoryFields(fields.id));
     const idsArray = Array.isArray(id) ? id : [id];
     let qtdErro = 0;
     let qtdSucesso = 0;
@@ -105,7 +110,7 @@ export default class UsuariosService {
     );
 
     if (usuarioCadastrado.length > 0) {
-      return { message: "Usuário já cadastrado!" };
+      return { message: userAlreadyInDB };
     }
 
     return null;

@@ -1,7 +1,11 @@
 import { describe, expect, test } from "vitest";
 import UsuariosRepositoryInMemory from "../repository/usuariosRepositoryInMemory";
 import UsuariosService from "../service/usuariosService";
-import { mandatoryFields } from "../../../utils/constants";
+import {
+  fields,
+  mandatoryFields,
+  userAlreadyInDB,
+} from "../../../utils/constants";
 
 const sut = () => {
   const repository = new UsuariosRepositoryInMemory();
@@ -22,7 +26,7 @@ describe("Testes da classe UsuariosService", () => {
           senha: "senha",
           dataNascimento: "2023-04-25",
         })
-      ).rejects.toThrow(new Error(mandatoryFields("nome")));
+      ).rejects.toThrow(new Error(mandatoryFields(fields.nome)));
 
       await expect(
         service.insertUsuario({
@@ -31,7 +35,7 @@ describe("Testes da classe UsuariosService", () => {
           senha: "senha",
           dataNascimento: "2023-04-25",
         })
-      ).rejects.toThrow(new Error(mandatoryFields("email")));
+      ).rejects.toThrow(new Error(mandatoryFields(fields.email)));
 
       await expect(
         service.insertUsuario({
@@ -40,7 +44,7 @@ describe("Testes da classe UsuariosService", () => {
           senha: "",
           dataNascimento: "2023-04-25",
         })
-      ).rejects.toThrow(new Error(mandatoryFields("senha")));
+      ).rejects.toThrow(new Error(mandatoryFields(fields.senha)));
 
       await expect(
         service.insertUsuario({
@@ -49,7 +53,7 @@ describe("Testes da classe UsuariosService", () => {
           senha: "senha",
           dataNascimento: "",
         })
-      ).rejects.toThrow(new Error(mandatoryFields("dataNascimento")));
+      ).rejects.toThrow(new Error(mandatoryFields(fields.dataNasc)));
     });
 
     test("Esse tem que lançar uma exceção por ter recebido um email que já está cadastrado no banco", async () => {
@@ -62,7 +66,7 @@ describe("Testes da classe UsuariosService", () => {
           senha: "senha",
           dataNascimento: "2023-04-25",
         })
-      ).rejects.toThrow(new Error("Usuário já cadastrado!"));
+      ).rejects.toThrow(new Error(userAlreadyInDB));
     });
 
     test("Esse tem que fazer o insert do usuário e não retornar nada", async () => {
@@ -86,7 +90,7 @@ describe("Testes da classe UsuariosService", () => {
         service.listUserById({
           id: "",
         })
-      ).rejects.toThrow(new Error(mandatoryFields("id")));
+      ).rejects.toThrow(new Error(mandatoryFields(fields.id)));
     });
 
     test("Esse tem que retornar o usuário encontrado no banco de dados de acordo com o id recebido", async () => {
@@ -137,7 +141,7 @@ describe("Testes da classe UsuariosService", () => {
             nome: "Jane Doe",
           },
         })
-      ).rejects.toThrow(new Error(mandatoryFields("email")));
+      ).rejects.toThrow(new Error(mandatoryFields(fields.email)));
 
       await expect(
         service.updateUser({
@@ -148,7 +152,7 @@ describe("Testes da classe UsuariosService", () => {
             },
           ],
         })
-      ).rejects.toThrow(new Error(mandatoryFields("id")));
+      ).rejects.toThrow(new Error(mandatoryFields(fields.id)));
     });
 
     test("Esse tem que retornar a quantidade de erros, os erros e a quantidade de sucessos", async () => {
@@ -187,7 +191,7 @@ describe("Testes da classe UsuariosService", () => {
       const { service } = sut();
 
       await expect(service.deleteUser({})).rejects.toThrow(
-        new Error(mandatoryFields("id"))
+        new Error(mandatoryFields(fields.id))
       );
     });
 

@@ -1,3 +1,4 @@
+import { requestFails } from "../../../utils/constants.js";
 import {
   badRequest,
   created,
@@ -65,7 +66,7 @@ export default class UsuariosController {
 
       if (qtdSuccess > 0 && qtdError === 0) return ok({ qtdSuccess });
 
-      return badRequest("Erro ao atualizar o(s) usuário(s)");
+      return badRequest(requestFails.update);
     } catch (err) {
       return badRequest(err.message);
     }
@@ -77,7 +78,7 @@ export default class UsuariosController {
       const { qtdErro, qtdSucesso } = await this.service.deleteUser({ id });
 
       if (qtdErro > 0 && qtdSucesso === 0)
-        return badRequest("Falha ao deletar o(s) usuário(s)");
+        return badRequest(requestFails.delete);
 
       return ok({ qtdSucesso, qtdErro });
     } catch (err) {

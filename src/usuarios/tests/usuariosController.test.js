@@ -7,7 +7,7 @@ import {
   noContent,
   ok,
 } from "../../../utils/responsesCodes";
-import { mandatoryFields } from "../../../utils/constants";
+import { mandatoryFields, requestFails } from "../../../utils/constants";
 import { mockUsuario, mockUsuariosDatabase } from "../utils/mock";
 
 const sut = ({ method, serviceFn }) => {
@@ -288,7 +288,7 @@ describe("Testes da classe UsuariosController", () => {
 
       const response = await controller.deleteUser({ body: { id: 1 } });
 
-      expect(response).toEqual(badRequest("Falha ao deletar o(s) usuário(s)"));
+      expect(response).toEqual(badRequest(requestFails.delete));
       expect(service).toHaveBeenCalledTimes(1);
     });
 
