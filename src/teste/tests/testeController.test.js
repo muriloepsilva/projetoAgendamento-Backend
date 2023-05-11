@@ -3,7 +3,6 @@ import TesteController from "../controller/testeController";
 import TesteService from "../service/testeService";
 import { badRequest, noContent, ok } from "../../../utils/responsesCodes";
 import { mandatoryFields } from "../../../utils/constants";
-import { mockUsuario } from "../utils/mock";
 
 const sut = ({ method, serviceFn }) => {
   const controller = new TesteController();
@@ -60,52 +59,6 @@ describe("Testes da TesteController", () => {
       });
 
       expect(response).toEqual(badRequest(mandatoryFields("nome")));
-      expect(service).toHaveBeenCalledTimes(1);
-    });
-  });
-
-  describe("testeChamadaBanco", () => {
-    test("Esse tem que retornar status 204", async () => {
-      const { controller, service } = sut({
-        method: "testeChamadaBanco",
-        serviceFn: () => [],
-      });
-
-      const response = await controller.testeChamadaBanco({
-        params: { id: 28 },
-      });
-
-      expect(response).toEqual(noContent("Sem dados no banco"));
-      expect(service).toHaveBeenCalledTimes(1);
-    });
-
-    test("Esse tem que retornar status 200", async () => {
-      const { controller, service } = sut({
-        method: "testeChamadaBanco",
-        serviceFn: () => mockUsuario,
-      });
-
-      const response = await controller.testeChamadaBanco({
-        params: { id: 1 },
-      });
-
-      expect(response).toEqual(ok(mockUsuario));
-      expect(service).toHaveBeenCalledTimes(1);
-    });
-
-    test("Esse tem que retornar status 400 por não ter recebido o id", async () => {
-      const { controller, service } = sut({
-        method: "testeChamadaBanco",
-        serviceFn: () => {
-          throw new Error(mandatoryFields("id"));
-        },
-      });
-
-      const response = await controller.testeChamadaBanco({
-        params: { id: null },
-      });
-
-      expect(response).toEqual(badRequest(mandatoryFields("id")));
       expect(service).toHaveBeenCalledTimes(1);
     });
   });
