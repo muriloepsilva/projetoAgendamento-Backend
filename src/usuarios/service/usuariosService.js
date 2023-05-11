@@ -58,6 +58,7 @@ export default class UsuariosService {
 
     for (const user of bodyArray) {
       if (!user.id) throw new Error(mandatoryFields("id"));
+      if (!user.email) throw new Error(mandatoryFields("email"));
 
       const emailExists = await this.verifyUserByEmail(user.email);
       if (emailExists) {

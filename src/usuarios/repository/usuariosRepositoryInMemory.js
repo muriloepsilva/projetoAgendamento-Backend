@@ -32,7 +32,13 @@ export default class UsuariosRepositoryInMemory {
     return this.users;
   }
 
-  async deleteUser() {
-    return [];
+  async updateUser() {}
+
+  async deleteUser(id) {
+    const filteredById = this.users.some((user) => user.id === id);
+
+    if (filteredById) return { affectedRows: 1 };
+
+    return { affectedRows: 0 };
   }
 }

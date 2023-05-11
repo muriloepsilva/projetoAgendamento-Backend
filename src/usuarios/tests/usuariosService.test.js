@@ -125,4 +125,82 @@ describe("Testes da classe UsuariosService", () => {
       ]);
     });
   });
+
+  describe("updateUser", () => {
+    test("Esse tem que lançar uma exceção por não ter recebido o email e o id", async () => {
+      const { service } = sut();
+
+      await expect(
+        service.updateUser({
+          body: {
+            id: 1,
+            nome: "Jane Doe",
+          },
+        })
+      ).rejects.toThrow(new Error(mandatoryFields("email")));
+
+      await expect(
+        service.updateUser({
+          body: [
+            {
+              nome: "Jane Doe",
+              email: "useremail@email.com",
+            },
+          ],
+        })
+      ).rejects.toThrow(new Error(mandatoryFields("id")));
+    });
+
+    test("Esse tem que retornar a quantidade de erros, os erros e a quantidade de sucessos", async () => {
+      const { service } = sut();
+
+      const serviceResponse = await service.updateUser({
+        body: [
+          {
+            id: 1,
+            email: "useremail@email.com",
+            senha: "senha",
+          },
+          {
+            id: 2,
+            email: "useremail3@email.com",
+            senha: "senha",
+          },
+        ],
+      });
+      expect(serviceResponse).toEqual({
+        error: [
+          {
+            id: 1,
+            email: "useremail@email.com",
+            senha: "senha",
+          },
+        ],
+        qtdError: 1,
+        qtdSuccess: 1,
+      });
+    });
+  });
+
+  describe("deleteUser", () => {
+    test("Esse tem que lançar uma esceção por não ter recebido o id", async () => {
+      const { service } = sut();
+
+      await expect(service.deleteUser({})).rejects.toThrow(
+        new Error(mandatoryFields("id"))
+      );
+    });
+
+    test("Esse tem que retornar a quantidade de erros e a quantidade de sucessos", async () => {
+      const { service } = sut();
+
+      const requestIds = [1, 3];
+
+      const response = await service.deleteUser({ id: requestIds });
+      expect(response).toEqual({ qtdErro: 1, qtdSucesso: 1 });
+
+      const response2 = await service.deleteUser({ id: requestIds[1] });
+      expect(response2).toEqual({ qtdErro: 1, qtdSucesso: 0 });
+    });
+  });
 });

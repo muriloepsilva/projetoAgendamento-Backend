@@ -147,4 +147,175 @@ describe("Testes da classe UsuariosController", () => {
       expect(service).toHaveBeenCalledTimes(1);
     });
   });
+
+  describe("updateUsers", () => {
+    test("Esse tem que retornar status 200 com a quantidade de sucessos", async () => {
+      const { controller, service } = sut({
+        method: "updateUser",
+        serviceFn: () => ({
+          qtdError: 0,
+          qtdSuccess: 1,
+          error: [],
+        }),
+      });
+
+      const response = await controller.updateUser({
+        id: 1,
+        nome: "User Name",
+      });
+
+      expect(response).toEqual(ok({ qtdSuccess: 1 }));
+      expect(service).toHaveBeenCalledTimes(1);
+    });
+
+    test("Esse tem que retornar status 200 com a quantidade de sucessos, a quantidade de erros e quais foram os que deram erro", async () => {
+      const { controller, service } = sut({
+        method: "updateUser",
+        serviceFn: () => ({
+          qtdError: 1,
+          qtdSuccess: 1,
+          error: [
+            {
+              id: 2,
+              nome: "User Name",
+            },
+          ],
+        }),
+      });
+
+      const response = await controller.updateUser([
+        {
+          id: 1,
+          nome: "User Name",
+        },
+        {
+          id: 2,
+          nome: "User Name",
+        },
+      ]);
+
+      expect(response).toEqual(
+        ok({
+          qtdError: 1,
+          qtdSuccess: 1,
+          error: [
+            {
+              id: 2,
+              nome: "User Name",
+            },
+          ],
+        })
+      );
+    });
+
+    test("Esse tem que retornar status 400 com a quantidade de erros", async () => {
+      const { controller, service } = sut({
+        method: "updateUser",
+        serviceFn: () => ({
+          qtdError: 1,
+          qtdSuccess: 0,
+          error: [
+            {
+              id: 1,
+              nome: "User Name",
+            },
+          ],
+        }),
+      });
+
+      const response = await controller.updateUser({
+        id: 1,
+        nome: "User Name",
+      });
+
+      expect(response).toEqual(
+        badRequest({
+          qtdError: 1,
+          error: [
+            {
+              id: 1,
+              nome: "User Name",
+            },
+          ],
+        })
+      );
+      expect(service).toHaveBeenCalledTimes(1);
+    });
+
+    test("Esse tem que retornar status 400", async () => {
+      const { controller, service } = sut({
+        method: "updateUser",
+        serviceFn: () => ({
+          qtdError: 0,
+          qtdSuccess: 0,
+          error: [],
+        }),
+      });
+
+      const response = await controller.updateUser({
+        id: 1,
+        nome: "User Name",
+      });
+
+      expect(response).toEqual(badRequest("Erro ao atualizar o(s) usuário(s)"));
+      expect(service).toHaveBeenCalledTimes(1);
+    });
+
+    test("Esse tem que retornar status 400 porque a service lançou uma exceção", async () => {
+      const { controller, service } = sut({
+        method: "updateUser",
+        serviceFn: () => {
+          throw new Error(mandatoryFields("email"));
+        },
+      });
+
+      const response = await controller.updateUser({
+        id: 1,
+        nome: "User Name",
+      });
+
+      expect(response).toEqual(badRequest(mandatoryFields("email")));
+      expect(service).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe("deleteUsers", () => {
+    test("Esse tem que retornar status 400 por ter recebido a quantidade de erros maior que 0 e 0 sucessos", async () => {
+      const { controller, service } = sut({
+        method: "deleteUser",
+        serviceFn: () => ({ qtdErro: 1, qtdSucesso: 0 }),
+      });
+
+      const response = await controller.deleteUser({ body: { id: 1 } });
+
+      expect(response).toEqual(badRequest("Falha ao deletar o(s) usuário(s)"));
+      expect(service).toHaveBeenCalledTimes(1);
+    });
+
+    test("Esse tem que retornar status 400 porque a service lançou uma exceção", async () => {
+      const { controller, service } = sut({
+        method: "deleteUser",
+        serviceFn: () => {
+          throw new Error("Erro");
+        },
+      });
+
+      const response = await controller.deleteUser({ body: { id: 1 } });
+
+      expect(response).toEqual(badRequest("Erro"));
+      expect(service).toHaveBeenCalledTimes(1);
+    });
+
+    test("Esse tem que retornar status 200 com a quantidade de erros e sucessos", async () => {
+      const { controller, service } = sut({
+        method: "deleteUser",
+        serviceFn: () => ({ qtdErro: 0, qtdSucesso: 1 }),
+      });
+
+      const response = await controller.deleteUser({ body: { id: 1 } });
+
+      expect(response).toEqual(ok({ qtdErro: 0, qtdSucesso: 1 }));
+      expect(service).toHaveBeenCalledTimes(1);
+    });
+  });
 });
